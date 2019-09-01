@@ -1,14 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using Demo.Service.Tenants.Infrastructure;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
 
 namespace Demo.Service.Tenants
 {
@@ -25,6 +20,34 @@ namespace Demo.Service.Tenants
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
+
+            services.AddAuthorization(options =>
+            {
+                options.AddPolicy(Constants.CreateTenantPolicy, c =>
+                {
+                    c.RequireClaim(Constants.CreateTenantClaim);
+                });
+                options.AddPolicy(Constants.ReadDomainsPolicy, c =>
+                {
+                    c.RequireClaim(Constants.ReadDomainsClaim);
+                });
+                options.AddPolicy(Constants.ManageUsersPolicy, c =>
+                {
+                    c.RequireClaim(Constants.ManageUserClaim);
+                });
+                options.AddPolicy(Constants.ManageTenantPolicy, c =>
+                {
+                    c.RequireClaim(Constants.ManageTenantClaim);
+                });
+                options.AddPolicy(Constants.ReadTenantsPolicy, c =>
+                {
+                    c.RequireClaim(Constants.ReadTenantsClaim);
+                });
+                options.AddPolicy(Constants.ManageTenantsPolicy, c =>
+                {
+                    c.RequireClaim(Constants.ManageTenantsClaim);
+                });
+            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -34,7 +57,7 @@ namespace Demo.Service.Tenants
             {
                 app.UseDeveloperExceptionPage();
             }
-
+            app.UseAuthentication();
             app.UseMvc();
         }
     }

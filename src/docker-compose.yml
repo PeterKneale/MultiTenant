@@ -1,0 +1,18 @@
+version: '3.4'
+
+services:
+  
+  demo.service.widgets:
+    image: micro.services.widgets
+    build:
+      context: .
+      dockerfile: src/Demo.Service.Widgets/Dockerfile    
+    depends_on:
+      - db
+      - logs
+      
+  logs:
+    image: datalust/seq:latest
+
+  db:
+    image: microsoft/mssql-server-linux
